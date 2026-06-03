@@ -1,0 +1,18 @@
+# IDE
+.idea/
+*.iml
+
+# Maven
+TrafficCamera/target/
+
+# Node
+traffice-camera-web/node_modules/
+traffice-camera-web/dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.local

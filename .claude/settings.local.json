@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__idea__list_directory_tree",
+      "mcp__idea__replace_text_in_file",
+      "mcp__idea__create_new_file",
+      "mcp__idea__build_project",
+      "mcp__idea__get_file_text_by_path",
+      "mcp__idea__execute_terminal_command"
+    ]
+  }
+}

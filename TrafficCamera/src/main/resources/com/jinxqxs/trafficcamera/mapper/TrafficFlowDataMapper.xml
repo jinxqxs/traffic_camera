@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinxqxs.trafficcamera.mapper.TrafficFlowDataMapper">
+
+    <insert id="insertTrafficFlowData">
+        insert into traffic_flow_data(camera_id,direction,start_time,car_count)
+                    values (#{camera_id},#{direction},#{start_time},#{car_count})
+    </insert>
+
+    <select id="selectTrafficTrends5Min" resultType="java.util.Map">
+        SELECT
+        CASE #{intervalType}
+        WHEN '5min' THEN
+        CONCAT(DATE_FORMAT(start_time, '%Y-%m-%d %H:'), LPAD(FLOOR(MINUTE(start_time)/5)*5, 2, '0'))
+        WHEN '30min' THEN
+        CONCAT(DATE_FORMAT(start_time, '%Y-%m-%d %H:'), LPAD(FLOOR(MINUTE(start_time)/30)*30, 2, '0'))
+        WHEN '1hour' THEN
+        DATE_FORMAT(start_time, '%Y-%m-%d %H:00')
+        END AS time,
+        SUM(car_count) AS totalCount
+        FROM traffic_flow_data
+        WHERE camera_id = #{cameraId}
+        AND start_time &gt;= #{beginTime}
+        AND start_time &lt; #{endTime}
+        GROUP BY time
+        ORDER BY time
+    </select>
+
+</mapper>

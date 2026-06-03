@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jinxqxs.trafficcamera.mapper.TrafficCameraMapper">
+
+    <resultMap type="com.jinxqxs.trafficcamera.pojo.TrafficCamera" id="TrafficCameraResult">
+        <result property="cameraId"    column="camera_id"    />
+        <result property="cameraName"    column="camera_name"    />
+        <result property="cameraCode"    column="camera_code"    />
+        <result property="videoUrl"    column="video_url"    />
+        <result property="location"    column="location"    />
+        <result property="status"    column="status"    />
+        <result property="threshold"    column="threshold"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectTrafficCameraVo">
+        select camera_id, camera_name, camera_code, video_url, location, status, threshold,  remark from traffic_camera
+    </sql>
+
+    <select id="selectTrafficCameraList" parameterType="com.jinxqxs.trafficcamera.pojo.TrafficCamera" resultMap="TrafficCameraResult">
+        <include refid="selectTrafficCameraVo"/>
+        <where>
+            <if test="cameraName != null  and cameraName != ''"> and camera_name like concat('%', #{cameraName}, '%')</if>
+            <if test="cameraCode != null  and cameraCode != ''"> and camera_code = #{cameraCode}</if>
+            <if test="videoUrl != null  and videoUrl != ''"> and video_url = #{videoUrl}</if>
+            <if test="location != null  and location != ''"> and location = #{location}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="threshold != null "> and threshold = #{threshold}</if>
+        </where>
+    </select>
+
+    <select id="selectTrafficCameraByCameraId" parameterType="Long" resultMap="TrafficCameraResult">
+        <include refid="selectTrafficCameraVo"/>
+        where camera_id = #{cameraId}
+    </select>
+
+    <insert id="insertTrafficCamera" parameterType="com.jinxqxs.trafficcamera.pojo.TrafficCamera" useGeneratedKeys="true" keyProperty="cameraId">
+        insert into traffic_camera
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cameraName != null and cameraName != ''">camera_name,</if>
+            <if test="cameraCode != null and cameraCode != ''">camera_code,</if>
+            <if test="videoUrl != null">video_url,</if>
+            <if test="location != null">location,</if>
+            <if test="status != null">status,</if>
+            <if test="threshold != null">threshold,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cameraName != null and cameraName != ''">#{cameraName},</if>
+            <if test="cameraCode != null and cameraCode != ''">#{cameraCode},</if>
+            <if test="videoUrl != null">#{videoUrl},</if>
+            <if test="location != null">#{location},</if>
+            <if test="status != null">#{status},</if>
+            <if test="threshold != null">#{threshold},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateTrafficCamera" parameterType="com.jinxqxs.trafficcamera.pojo.TrafficCamera">
+        update traffic_camera
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cameraName != null and cameraName != ''">camera_name = #{cameraName},</if>
+            <if test="cameraCode != null and cameraCode != ''">camera_code = #{cameraCode},</if>
+            <if test="videoUrl != null">video_url = #{videoUrl},</if>
+            <if test="location != null">location = #{location},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="threshold != null">threshold = #{threshold},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where camera_id = #{cameraId}
+    </update>
+
+    <delete id="deleteTrafficCameraByCameraId" parameterType="Long">
+        delete from traffic_camera where camera_id = #{cameraId}
+    </delete>
+
+    <delete id="deleteTrafficCameraByCameraIds" parameterType="String">
+        delete from traffic_camera where camera_id in
+        <foreach item="cameraId" collection="array" open="(" separator="," close=")">
+            #{cameraId}
+        </foreach>
+    </delete>
+</mapper>

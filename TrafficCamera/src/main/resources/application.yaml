@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: TrafficCamera
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/traffic_camera?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&serverTimezone=GMT%2B8&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 开启SQL打印
+
+logging:
+  level:
+    com.jinxqxs.trafficcamera.mapper: debug
+
+# ==================== JWT 配置 ====================
+# 生产环境务必使用高强度随机密钥（至少 256 位 Base64），并放入环境变量！
+jwt:
+  secret: c2VjdXJlLXRyYWZmaWMtY2FtZXJhLWp3dC1zZWNyZXQta2V5LWZvci1oYWMyNTYtYWxnb3JpdGhtLW1pbi0yNTYtYml0cw==
+
