@@ -2,8 +2,15 @@
   <div class="app-container">
     <el-card shadow="hover">
       <el-form :inline="true" label-width="100px">
-        <el-form-item label="摄像头ID">
-          <el-input v-model="queryParams.cameraId" placeholder="请输入摄像头ID" clearable />
+        <el-form-item label="摄像头">
+          <el-select v-model="queryParams.cameraId" placeholder="请选择摄像头" clearable style="width: 200px">
+            <el-option
+                v-for="item in cameraList"
+                :key="item.cameraId"
+                :label="item.cameraName + ' (' + item.cameraCode + ')'"
+                :value="item.cameraId"
+            />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="统计时间">
@@ -20,7 +27,7 @@
         </el-form-item>
 
         <el-form-item label="统计间隔">
-          <el-select v-model="queryParams.interval" placeholder="请选择统计间隔">
+          <el-select v-model="queryParams.interval" placeholder="请选择统计间隔" style="width: 120px">
             <el-option label="5分钟" value="5min" />
             <el-option label="半小时" value="30min" />
             <el-option label="1小时" value="1hour" />
@@ -46,11 +53,13 @@
 <script>
 import * as echarts from 'echarts';
 import request from '@/utils/request'
+import { getVideoList } from '@/api/traffic/camera'
 
 export default {
   name: "FlowAnalysis",
   data() {
     return {
+      cameraList: [],
       queryParams: {
         cameraId: "",
         dateRange: [],
@@ -67,6 +76,7 @@ export default {
   },
   created() {
     this.setDefaultTime();
+    this.loadCameraList();
   },
   mounted() {
     this.myChart = echarts.init(this.$refs.chartRef);
@@ -85,6 +95,15 @@ export default {
       const start = new Date();
       start.setMinutes(start.getMinutes() - 30);
       this.queryParams.dateRange = [this.formatDate(start), this.formatDate(end)];
+    },
+    // 加载摄像头列表
+    async loadCameraList() {
+      try {
+        const res = await getVideoList({ status: '0' });
+        this.cameraList = res.data;
+      } catch (e) {
+        console.error('加载摄像头列表失败：', e);
+      }
     },
     fillMissingData(backendData, beginTime, endTime, interval) {
       const result = [];
@@ -167,7 +186,7 @@ export default {
     // 🌟 核心修改：改为 async 异步方法，请求真实后端接口
     async handleQuery() {
       if (!this.queryParams.cameraId) {
-        this.$message.warning("请输入摄像头ID");
+        this.$message.warning("请选择摄像头");
         return;
       }
       if (!this.queryParams.dateRange || this.queryParams.dateRange.length !== 2) {

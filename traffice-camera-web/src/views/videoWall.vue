@@ -46,13 +46,16 @@ export default {
       }
     };
   },
-  created() {
+  mounted() {
     this.getList();
   },
   methods: {
     getList() {
       getVideoList(this.queryParams).then(response => {
         this.cameraList = response.data;
+      }).catch(err => {
+        console.error('获取视频列表失败：', err);
+        this.$message.error('获取视频列表失败');
       });
     }
   }

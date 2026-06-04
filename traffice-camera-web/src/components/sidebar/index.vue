@@ -9,6 +9,19 @@
           mode="vertical"
           router
       >
+        <!-- 仅 admin 可见 -->
+        <template v-if="role === 'admin'">
+          <el-menu-item index="/user-management">
+            <i class="el-icon-user"></i>
+            <span>账号管理</span>
+          </el-menu-item>
+
+          <el-menu-item index="/traffic">
+            <i class="el-icon-video-camera"></i>
+            <span>交通监控设备</span>
+          </el-menu-item>
+        </template>
+
         <!-- admin 和 user 都可见 -->
         <el-menu-item index="/video-wall">
           <i class="el-icon-monitor"></i>
@@ -19,19 +32,6 @@
           <i class="el-icon-data-line"></i>
           <span>流量查询</span>
         </el-menu-item>
-
-        <!-- 仅 admin 可见 -->
-        <template v-if="role === 'admin'">
-          <el-menu-item index="/traffic">
-            <i class="el-icon-video-camera"></i>
-            <span>交通监控设备</span>
-          </el-menu-item>
-
-          <el-menu-item index="/user-management">
-            <i class="el-icon-user"></i>
-            <span>账号管理</span>
-          </el-menu-item>
-        </template>
       </el-menu>
     </el-scrollbar>
   </div>

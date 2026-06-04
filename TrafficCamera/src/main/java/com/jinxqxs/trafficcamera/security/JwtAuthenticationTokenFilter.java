@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +22,7 @@ import java.util.List;
  *   从 Authorization 头中提取 Access Token → 校验 → 写入 SecurityContext。
  *   将 role 映射为 Spring Security GrantedAuthority。
  */
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -38,6 +40,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith(BEARER_PREFIX)) {
+            log.debug("JWT Filter: no Authorization header for {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,6 +49,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 检查 Access Token 是否在登出黑名单中
         if (blacklist.isBlacklisted(token)) {
+            log.warn("JWT Filter: token is blacklisted for {}", request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -55,6 +59,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String username = jwtUtil.getUsernameFromToken(token);
             String role = jwtUtil.getRoleFromToken(token);
 
+            log.debug("JWT Filter: token valid, username={}, role={}", username, role);
+
             // ROLE_ 前缀是 Spring Security 的约定
             List<SimpleGrantedAuthority> authorities =
                     Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
@@ -62,6 +68,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } else {
+            log.warn("JWT Filter: token validation FAILED for {}", request.getRequestURI());
         }
 
         filterChain.doFilter(request, response);

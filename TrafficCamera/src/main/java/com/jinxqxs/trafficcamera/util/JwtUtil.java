@@ -3,6 +3,8 @@ package com.jinxqxs.trafficcamera.util;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -11,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -20,12 +23,17 @@ public class JwtUtil {
     /**
      * Access Token 过期时间：30 分钟（毫秒）
      */
-    private static final long ACCESS_EXPIRATION =30*10* 1000L;
+    private static final long ACCESS_EXPIRATION = 30 * 60 * 1000L;
 
     /**
      * Refresh Token 过期时间：7 天（毫秒）
      */
-    private static final long REFRESH_EXPIRATION = 24 * 60 * 60 * 1000L;
+    private static final long REFRESH_EXPIRATION = 7 * 24 * 60 * 60 * 1000L;
+
+    @PostConstruct
+    public void init() {
+        log.info("JwtUtil: secret loaded, length={} chars", secret != null ? secret.length() : "NULL");
+    }
 
     /**
      * 按 Base64 解码密钥
@@ -107,7 +115,14 @@ public class JwtUtil {
         try {
             parseToken(token);
             return true;
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (ExpiredJwtException e) {
+            log.warn("JWT expired: {}", e.getMessage());
+            return false;
+        } catch (JwtException e) {
+            log.warn("JWT invalid: {} ({})", e.getMessage(), e.getClass().getSimpleName());
+            return false;
+        } catch (IllegalArgumentException e) {
+            log.warn("JWT illegal argument: {}", e.getMessage());
             return false;
         }
     }

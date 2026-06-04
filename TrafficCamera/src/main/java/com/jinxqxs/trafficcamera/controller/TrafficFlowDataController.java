@@ -13,7 +13,10 @@ public class TrafficFlowDataController {
     private TrafficFlowDataMapper flowDataMapper;
 
     @GetMapping("/trends")
-    public Result<Object> getTrends(Long cameraId, String beginTime, String endTime,String intervalType) {
+    public Result<Object> getTrends(@RequestParam(required = false) Long cameraId,
+                                     @RequestParam(required = false) String beginTime,
+                                     @RequestParam(required = false) String endTime,
+                                     @RequestParam(required = false) String intervalType) {
         // 默认值：使用你已经插入的测试数据时间
         if (cameraId == null) cameraId = 100L;
         if (beginTime == null) beginTime = "2025-12-28 00:00:00";

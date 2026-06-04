@@ -18,7 +18,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 public class TokenController {
-
+    
     private final JwtUtil jwtUtil;
     private final RefreshTokenBlacklist blacklist;
 
