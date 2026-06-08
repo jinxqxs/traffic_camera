@@ -18,3 +18,5 @@ Thumbs.db
 .env.local
 traffice-camera-web/public/traffic_video/
 nul
+*.mp4
+TrafficCamera/python_service/traffic_video/
