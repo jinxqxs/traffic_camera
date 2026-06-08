@@ -1,7 +1,15 @@
 <template>
   <div class="app-container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <el-icon :size="20" color="#00d4ff"><UserFilled /></el-icon>
+      <h2>账号管理</h2>
+    </div>
+
     <div class="toolbar">
-      <el-button type="primary" @click="handleAdd">新增账号</el-button>
+      <el-button type="primary" @click="handleAdd">
+        <el-icon><Plus /></el-icon>新增账号
+      </el-button>
     </div>
 
     <el-table :data="tableData" border>
@@ -19,10 +27,10 @@
         <template #default="scope">
           <el-button type="primary" link @click="handleEdit(scope.row)">编辑</el-button>
           <el-button
-              type="danger"
-              link
-              @click="handleDelete(scope.row)"
-              :disabled="scope.row.role === 'admin'"
+            type="danger"
+            link
+            @click="handleDelete(scope.row)"
+            :disabled="scope.row.role === 'admin'"
           >
             删除
           </el-button>
@@ -110,6 +118,29 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.app-container { padding: 20px; }
-.toolbar { margin-bottom: 10px; }
+.app-container {
+  padding: 20px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+.page-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.toolbar {
+  margin-bottom: 16px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
 </style>

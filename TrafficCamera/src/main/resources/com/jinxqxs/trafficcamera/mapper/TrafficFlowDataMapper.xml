@@ -11,21 +11,20 @@
 
     <select id="selectTrafficTrends5Min" resultType="java.util.Map">
         SELECT
-        CASE #{intervalType}
-        WHEN '5min' THEN
-        CONCAT(DATE_FORMAT(start_time, '%Y-%m-%d %H:'), LPAD(FLOOR(MINUTE(start_time)/5)*5, 2, '0'))
-        WHEN '30min' THEN
-        CONCAT(DATE_FORMAT(start_time, '%Y-%m-%d %H:'), LPAD(FLOOR(MINUTE(start_time)/30)*30, 2, '0'))
-        WHEN '1hour' THEN
-        DATE_FORMAT(start_time, '%Y-%m-%d %H:00')
-        END AS time,
-        SUM(car_count) AS totalCount
+            start_time AS time,
+            car_count AS totalCount
         FROM traffic_flow_data
         WHERE camera_id = #{cameraId}
-        AND start_time &gt;= #{beginTime}
-        AND start_time &lt; #{endTime}
-        GROUP BY time
-        ORDER BY time
+          AND start_time &gt;= #{beginTime}
+          AND start_time &lt; #{endTime}
+        ORDER BY start_time
     </select>
+
+    <delete id="deleteByCameraIds">
+        delete from traffic_flow_data where camera_id in
+        <foreach item="cameraId" collection="cameraIds" open="(" separator="," close=")">
+            #{cameraId}
+        </foreach>
+    </delete>
 
 </mapper>

@@ -18,4 +18,6 @@ public interface TrafficFlowDataMapper {
             @Param("beginTime") String beginTime,
             @Param("endTime") String endTime,
             @Param("intervalType") String intervalType);
+
+    int deleteByCameraIds(@Param("cameraIds") Long[] cameraIds);
 }

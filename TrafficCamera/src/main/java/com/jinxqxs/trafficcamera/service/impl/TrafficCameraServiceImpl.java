@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.jinxqxs.trafficcamera.mapper.TrafficCameraMapper;
+import com.jinxqxs.trafficcamera.mapper.TrafficFlowDataMapper;
 import com.jinxqxs.trafficcamera.pojo.TrafficCamera;
 import com.jinxqxs.trafficcamera.service.TrafficCameraService;
+import com.jinxqxs.trafficcamera.service.TrafficPyService;
 
 /**
  * 交通监控设备Service业务层处理
@@ -21,6 +23,12 @@ public class TrafficCameraServiceImpl implements TrafficCameraService
 {
     @Autowired
     private TrafficCameraMapper trafficCameraMapper;
+
+    @Autowired
+    private TrafficFlowDataMapper trafficFlowDataMapper;
+
+    @Autowired
+    private TrafficPyService trafficPyService;
 
     /**
      * 查询交通监控设备
@@ -55,7 +63,9 @@ public class TrafficCameraServiceImpl implements TrafficCameraService
     @Override
     public int insertTrafficCamera(TrafficCamera trafficCamera)
     {
-        return trafficCameraMapper.insertTrafficCamera(trafficCamera);
+        int rows = trafficCameraMapper.insertTrafficCamera(trafficCamera);
+        trafficPyService.reload();
+        return rows;
     }
 
     /**
@@ -79,7 +89,10 @@ public class TrafficCameraServiceImpl implements TrafficCameraService
     @Override
     public int deleteTrafficCameraByCameraIds(Long[] cameraIds)
     {
-        return trafficCameraMapper.deleteTrafficCameraByCameraIds(cameraIds);
+        trafficFlowDataMapper.deleteByCameraIds(cameraIds);
+        int rows = trafficCameraMapper.deleteTrafficCameraByCameraIds(cameraIds);
+        trafficPyService.reload();
+        return rows;
     }
 
     /**
@@ -91,6 +104,9 @@ public class TrafficCameraServiceImpl implements TrafficCameraService
     @Override
     public int deleteTrafficCameraByCameraId(Long cameraId)
     {
-        return trafficCameraMapper.deleteTrafficCameraByCameraId(cameraId);
+        trafficFlowDataMapper.deleteByCameraIds(new Long[]{cameraId});
+        int rows = trafficCameraMapper.deleteTrafficCameraByCameraId(cameraId);
+        trafficPyService.reload();
+        return rows;
     }
 }
